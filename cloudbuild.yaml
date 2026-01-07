@@ -37,3 +37,4 @@ steps:
 
 images:
   - 'gcr.io/$PROJECT_ID/rf-detr-app'
+
