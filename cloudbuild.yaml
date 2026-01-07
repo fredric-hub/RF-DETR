@@ -1,0 +1,38 @@
+steps:
+  # 1. Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/rf-detr-app', '.']
+
+  # 2. Push the image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/rf-detr-app']
+
+  # 3. Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'beta'
+      - 'run'
+      - 'deploy'
+      - 'rf-detr-service'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/rf-detr-app'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--no-allow-unauthenticated'
+      # GPU Configuration (L4 is the standard for serverless GPU)
+      - '--gpu'
+      - '1'
+      - '--gpu-type'
+      - 'nvidia-l4'
+      # Memory Constraint (As requested)
+      - '--memory'
+      - '1Gi' 
+      # CPU Count (Must be at least 4 for GPU instances)
+      - '--cpu'
+      - '4'
+
+images:
+  - 'gcr.io/$PROJECT_ID/rf-detr-app'
