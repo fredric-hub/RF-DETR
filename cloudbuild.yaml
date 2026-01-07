@@ -7,14 +7,14 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/rf-detr-app']
 
-  # 3. Deploy to Cloud Run
+  # 3. Deploy to Cloud Run with SUFFICIENT MEMORY
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - 'beta'
       - 'run'
       - 'deploy'
-      - 'rf-detr-service'
+      - 'rf-detr'  # Matches your service_name in the logs
       - '--image'
       - 'gcr.io/$PROJECT_ID/rf-detr-app'
       - '--region'
@@ -22,15 +22,15 @@ steps:
       - '--platform'
       - 'managed'
       - '--no-allow-unauthenticated'
-      # GPU Configuration (L4 is the standard for serverless GPU)
+      # GPU CONFIGURATION
       - '--gpu'
       - '1'
       - '--gpu-type'
       - 'nvidia-l4'
-      # Memory Constraint (As requested)
+      # MEMORY FIX: Set to 8Gi to prevent OOM crashes
       - '--memory'
-      - '1Gi' 
-      # CPU Count (Must be at least 4 for GPU instances)
+      - '8Gi' 
+      # CPU FIX: 4 vCPUs are usually required to pair with 1 GPU
       - '--cpu'
       - '4'
 
