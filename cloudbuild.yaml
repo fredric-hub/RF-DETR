@@ -27,14 +27,17 @@ steps:
       - '1'
       - '--gpu-type'
       - 'nvidia-l4'
-      - '--no-cpu-throttling' # REQUIRED: CPUs must be always allocated when using GPUs
+      - '--no-cpu-throttling' 
       # Memory Constraint
       - '--memory'
-      - '16Gi' # REQUIRED: L4 GPUs require a minimum of 16Gi memory
+      - '16Gi' 
       # CPU Count
       - '--cpu'
-      - '4'    # REQUIRED: L4 GPUs require a minimum of 4 CPUs
+      - '4'
 
 images:
   - 'gcr.io/$PROJECT_ID/rf-detr-app'
 
+# ADD THIS SECTION TO FIX THE ERROR
+options:
+  logging: CLOUD_LOGGING_ONLY
