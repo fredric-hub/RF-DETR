@@ -7,14 +7,14 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/rf-detr-app']
 
-  # 3. Deploy to Cloud Run with SUFFICIENT MEMORY
+  # 3. Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - 'beta'
       - 'run'
       - 'deploy'
-      - 'rf-detr'  # Matches your service_name in the logs
+      - 'rf-detr-service'
       - '--image'
       - 'gcr.io/$PROJECT_ID/rf-detr-app'
       - '--region'
@@ -22,17 +22,18 @@ steps:
       - '--platform'
       - 'managed'
       - '--no-allow-unauthenticated'
-      # GPU CONFIGURATION
+      # GPU Configuration
       - '--gpu'
       - '1'
       - '--gpu-type'
       - 'nvidia-l4'
-      # MEMORY FIX: Set to 8Gi to prevent OOM crashes
+      - '--no-cpu-throttling' # REQUIRED: CPUs must be always allocated when using GPUs
+      # Memory Constraint
       - '--memory'
-      - '8Gi' 
-      # CPU FIX: 4 vCPUs are usually required to pair with 1 GPU
+      - '16Gi' # REQUIRED: L4 GPUs require a minimum of 16Gi memory
+      # CPU Count
       - '--cpu'
-      - '4'
+      - '4'    # REQUIRED: L4 GPUs require a minimum of 4 CPUs
 
 images:
   - 'gcr.io/$PROJECT_ID/rf-detr-app'
