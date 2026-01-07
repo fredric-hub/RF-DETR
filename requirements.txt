@@ -1,0 +1,11 @@
+# Core RF-DETR and Roboflow dependencies
+rfdetr>=1.2.1
+supervision>=0.26.0
+roboflow
+
+# Application server
+fastapi
+uvicorn
+python-multipart
+Pillow
+numpy
